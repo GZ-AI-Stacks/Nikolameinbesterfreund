@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="cyber">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0a1428">
+<title>Für Niko — 21.06.2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --c-bg:#06101c;
+    --c-ink:#dde7f0;
+    --c-mute:#7d8fa3;
+    --c-line:rgba(180,200,220,.12);
+    --c-card:rgba(14,24,38,.55);
+    --c-accent:#c9a96e;
+    --c-accent-2:#5d8aa8;
+    --serif:'Cormorant Garamond',Georgia,serif;
+    --sans:'Inter',-apple-system,Segoe UI,sans-serif;
+    --script:'Caveat',cursive;
+    --maxw:980px;
+  }
+
+  [data-theme="warm"]{
+    --c-bg:#f6efe3;
+    --c-ink:#3a2a1a;
+    --c-mute:#7a6850;
+    --c-line:rgba(58,42,26,.14);
+    --c-card:rgba(255,251,243,.85);
+    --c-accent:#9c6a3a;
+    --c-accent-2:#b8895c;
+  }
+
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{
+    font-family:var(--sans);
+    background:var(--c-bg);
+    color:var(--c-ink);
+    line-height:1.65;
+    min-height:100vh;
+    overflow-x:hidden;
+    font-weight:400;
+    transition:background .8s ease,color .8s ease;
+    padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+
+  /* === Hintergrund-Layer === */
+  .bg-grain{
+    position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
+    background-image:radial-gradient(circle at 20% 30%,rgba(201,169,110,.08) 0,transparent 50%),
+                     radial-gradient(circle at 80% 70%,rgba(93,138,168,.08) 0,transparent 50%);
+  }
+  [data-theme="warm"] .bg-grain{
+    background-image:radial-gradient(circle at 20% 20%,rgba(156,106,58,.12) 0,transparent 55%),
+                     radial-gradient(circle at 80% 80%,rgba(184,137,92,.10) 0,transparent 50%);
+    opacity:.7;
+  }
+  #bgcanvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;display:block}
+  [data-theme="warm"] #bgcanvas{display:none}
+
+  /* === Theme-Switcher === */
+  .theme-switcher{
+    position:fixed;top:1.2rem;right:1.2rem;z-index:50;
+    display:flex;gap:.4rem;padding:.35rem;
+    background:rgba(10,18,28,.6);
+    -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+    border:1px solid var(--c-line);border-radius:999px;
+  }
+  [data-theme="warm"] .theme-switcher{background:rgba(255,251,243,.6)}
+  .theme-switcher button{
+    appearance:none;background:transparent;color:var(--c-mute);
+    border:none;font-family:var(--sans);font-size:.78rem;font-weight:500;
+    letter-spacing:.5px;padding:.5rem .9rem;border-radius:999px;
+    cursor:pointer;transition:all .35s ease;
+  }
+  .theme-switcher button.active{background:var(--c-accent);color:#06101c}
+  [data-theme="warm"] .theme-switcher button.active{color:#f6efe3}
+  .theme-switcher button:hover:not(.active){color:var(--c-ink)}
+
+  /* === Container === */
+  main{position:relative;z-index:1;max-width:var(--maxw);margin:0 auto;padding:clamp(1.2rem,4vw,2.5rem)}
+
+  /* === Hero === */
+  .hero{
+    min-height:90vh;display:flex;flex-direction:column;justify-content:center;
+    align-items:center;text-align:center;padding:4rem 0 2rem;position:relative;
+  }
+  .hero .eyebrow{
+    font-family:var(--sans);font-size:.72rem;letter-spacing:.4em;
+    text-transform:uppercase;color:var(--c-accent);margin-bottom:1.8rem;
+    font-weight:500;
+  }
+  .hero .eyebrow::before,.hero .eyebrow::after{
+    content:"";display:inline-block;width:32px;height:1px;
+    background:var(--c-accent);vertical-align:middle;margin:0 1rem;opacity:.6;
+  }
+  .hero h1{
+    font-family:var(--serif);
+    font-size:clamp(3.2rem,12vw,7.5rem);
+    font-weight:400;line-height:.95;letter-spacing:-.02em;
+    margin-bottom:.5rem;
+  }
+  .hero h1 .name{
+    display:block;font-style:italic;color:var(--c-accent);
+    font-weight:600;font-size:clamp(4rem,16vw,10rem);
+    margin-top:.2rem;
+  }
+  .hero .date{
+    font-family:var(--script);font-size:clamp(1.5rem,4vw,2.2rem);
+    color:var(--c-mute);margin-top:2rem;font-weight:500;
+  }
+  .hero .scroll-hint{
+    position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);
+    font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;
+    color:var(--c-mute);opacity:.6;
+  }
+  .hero .scroll-hint::after{
+    content:"";display:block;width:1px;height:30px;
+    background:var(--c-mute);margin:.8rem auto 0;
+    animation:scrollLine 2.4s ease-in-out infinite;
+    transform-origin:top;
+  }
+  @keyframes scrollLine{
+    0%,100%{opacity:.2;transform:scaleY(.4)}
+    50%{opacity:1;transform:scaleY(1)}
+  }
+
+  /* === Sections === */
+  section{margin:clamp(4rem,10vw,8rem) 0}
+  .section-label{
+    font-family:var(--sans);font-size:.72rem;letter-spacing:.4em;
+    text-transform:uppercase;color:var(--c-accent);
+    text-align:center;margin-bottom:1.2rem;font-weight:500;
+  }
+  .section-label::before{
+    content:"";display:block;width:1px;height:40px;
+    background:var(--c-accent);margin:0 auto 1.2rem;opacity:.5;
+  }
+  h2{
+    font-family:var(--serif);
+    font-size:clamp(2rem,5vw,3.2rem);
+    font-weight:400;letter-spacing:-.01em;line-height:1.1;
+    text-align:center;margin-bottom:3rem;
+    font-style:italic;
+  }
+  h2 em{color:var(--c-accent);font-style:normal}
+
+  /* === Brief / Letter === */
+  .letter{
+    max-width:680px;margin:0 auto;
+    font-family:var(--serif);
+    font-size:clamp(1.15rem,2.5vw,1.4rem);
+    line-height:1.75;text-align:left;color:var(--c-ink);
+  }
+  .letter p{margin-bottom:1.4rem}
+  .letter p:first-child::first-letter{
+    font-family:var(--serif);font-size:4.5em;float:left;
+    line-height:.85;padding:.15em .12em 0 0;
+    color:var(--c-accent);font-weight:600;
+  }
+  .letter .sig{
+    font-family:var(--script);font-size:1.6rem;
+    color:var(--c-accent);margin-top:2rem;text-align:right;
+  }
+
+  /* === Video === */
+  .song-wrap{max-width:780px;margin:0 auto}
+  .song-frame{
+    position:relative;border-radius:6px;overflow:hidden;
+    box-shadow:0 30px 80px -20px rgba(0,0,0,.6),
+               0 0 0 1px var(--c-line);
+    background:#000;
+  }
+  .song-frame video{display:block;width:100%;height:auto}
+  .song-meta{
+    text-align:center;margin-top:1.5rem;
+    font-family:var(--serif);font-style:italic;
+    color:var(--c-mute);font-size:1.05rem;
+  }
+  .song-meta .dot{display:inline-block;margin:0 .8rem;opacity:.4}
+
+  /* === Galerie === */
+  .gallery{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));
+    gap:clamp(.8rem,2vw,1.4rem);
+  }
+  .gallery figure{
+    margin:0;position:relative;overflow:hidden;border-radius:4px;
+    background:var(--c-card);
+    box-shadow:0 14px 40px -16px rgba(0,0,0,.55),
+               0 0 0 1px var(--c-line);
+    transition:transform .5s cubic-bezier(.2,.8,.2,1),box-shadow .5s;
+  }
+  .gallery figure:hover{
+    transform:translateY(-4px);
+    box-shadow:0 30px 60px -20px rgba(0,0,0,.7),
+               0 0 0 1px rgba(201,169,110,.4);
+  }
+  .gallery img{
+    display:block;width:100%;height:100%;aspect-ratio:4/5;
+    object-fit:cover;cursor:zoom-in;
+    transition:transform .8s cubic-bezier(.2,.8,.2,1),filter .5s;
+    filter:saturate(.92) contrast(1.02);
+  }
+  .gallery figure:hover img{transform:scale(1.04);filter:saturate(1.05) contrast(1.05)}
+  .gallery .feature{grid-column:span 2;grid-row:span 2}
+  .gallery .feature img{aspect-ratio:1/1}
+  @media (max-width:640px){
+    .gallery .feature{grid-column:auto;grid-row:auto}
+  }
+
+  /* === Timeline === */
+  .timeline{
+    max-width:720px;margin:0 auto;position:relative;
+    padding:1rem 0;
+  }
+  .timeline::before{
+    content:"";position:absolute;left:32px;top:0;bottom:0;
+    width:1px;background:var(--c-line);
+  }
+  .tl-item{
+    position:relative;padding:0 0 3rem 4.5rem;
+  }
+  .tl-item:last-child{padding-bottom:0}
+  .tl-item::before{
+    content:"";position:absolute;left:27px;top:.6rem;
+    width:11px;height:11px;border-radius:50%;
+    background:var(--c-bg);border:1.5px solid var(--c-accent);
+  }
+  .tl-year{
+    font-family:var(--sans);font-size:.72rem;letter-spacing:.3em;
+    text-transform:uppercase;color:var(--c-accent);
+    margin-bottom:.5rem;font-weight:500;
+  }
+  .tl-item h3{
+    font-family:var(--serif);font-size:1.5rem;font-weight:400;
+    font-style:italic;margin-bottom:.6rem;line-height:1.3;
+  }
+  .tl-item p{
+    font-family:var(--serif);font-size:1.05rem;line-height:1.65;
+    color:var(--c-ink);opacity:.85;
+  }
+  @media (min-width:720px){
+    .timeline::before{left:50%}
+    .tl-item{
+      width:50%;padding:0 0 3rem 0;
+      padding-right:calc(50% - 28%);
+    }
+    .tl-item:nth-child(even){
+      margin-left:50%;padding-left:calc(50% - 28%);padding-right:0;
+    }
+    .tl-item::before{left:calc(100% - 5px)}
+    .tl-item:nth-child(even)::before{left:-6px}
+    .tl-item:nth-child(odd){text-align:right}
+  }
+
+  /* === Quote / Closing === */
+  .closing{
+    text-align:center;max-width:620px;margin:0 auto;
+    padding:clamp(2rem,5vw,3.5rem) clamp(1.5rem,4vw,3rem);
+    border-top:1px solid var(--c-line);border-bottom:1px solid var(--c-line);
+  }
+  .closing blockquote{
+    font-family:var(--serif);font-style:italic;
+    font-size:clamp(1.3rem,3vw,1.8rem);
+    line-height:1.5;color:var(--c-ink);
+    margin-bottom:1.2rem;
+  }
+  .closing cite{
+    font-family:var(--sans);font-size:.72rem;letter-spacing:.4em;
+    text-transform:uppercase;color:var(--c-accent);
+    font-style:normal;font-weight:500;
+  }
+
+  footer{
+    text-align:center;padding:3rem 1rem 4rem;
+    font-family:var(--script);font-size:1.4rem;
+    color:var(--c-mute);
+  }
+  footer .heart{color:var(--c-accent);display:inline-block;margin:0 .3rem}
+
+  /* === Lightbox === */
+  .lightbox{
+    position:fixed;inset:0;background:rgba(6,16,28,.96);
+    -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+    display:none;align-items:center;justify-content:center;
+    z-index:200;padding:1rem;cursor:zoom-out;
+  }
+  .lightbox.open{display:flex}
+  .lightbox img{
+    max-width:96vw;max-height:92vh;border-radius:4px;
+    box-shadow:0 40px 100px rgba(0,0,0,.6);
+  }
+  .lightbox-close{
+    position:absolute;top:1.2rem;right:1.2rem;
+    font-size:1.4rem;color:#fff;background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.15);cursor:pointer;
+    width:42px;height:42px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    transition:all .3s;
+  }
+  .lightbox-close:hover{background:rgba(255,255,255,.15);transform:rotate(90deg)}
+
+  /* === Reveal on scroll === */
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity 1s ease,transform 1s cubic-bezier(.2,.8,.2,1)}
+  .reveal.is-visible{opacity:1;transform:translateY(0)}
+
+  /* === Mobile feinheiten === */
+  @media (max-width:640px){
+    .theme-switcher{top:auto;bottom:1rem;right:50%;transform:translateX(50%)}
+    .hero{min-height:85vh;padding-top:3rem}
+    .hero .scroll-hint{display:none}
+    .letter p:first-child::first-letter{font-size:3.5em}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+    .reveal{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-grain" aria-hidden="true"></div>
+<canvas id="bgcanvas" aria-hidden="true"></canvas>
+
+<div class="theme-switcher" role="group" aria-label="Design auswählen">
+  <button type="button" data-set-theme="cyber" class="active">Nacht</button>
+  <button type="button" data-set-theme="warm">Sepia</button>
+</div>
+
+<main>
+
+  <header class="hero">
+    <p class="eyebrow">21 &middot; Juni &middot; 2026</p>
+    <h1>
+      Für dich,
+      <span class="name">Niko.</span>
+    </h1>
+    <p class="date">Heute feiern wir dich.</p>
+    <p class="scroll-hint">Weiter</p>
+  </header>
+
+  <section class="reveal" aria-labelledby="brief-heading">
+    <p class="section-label" id="brief-heading">Ein Brief</p>
+    <h2>Worte, die ich dir <em>schon lange</em> sagen wollte.</h2>
+    <div class="letter">
+      <p>Es gibt Menschen, die kreuzen deinen Weg und sind nach einer Saison wieder weg. Und dann gibt es die, von denen man weiß: Du bleibst. Egal, wie der Wind dreht.</p>
+      <p>Wir haben miteinander gelacht, bis uns die Köpfe brummten. Wir haben miteinander geschwiegen, weil keiner reden musste. Wir haben uns gegenseitig aus Tiefs geholt, die wir niemand anderem gezeigt hätten. Das ist nicht selbstverständlich &mdash; und ich hör nicht auf, dankbar dafür zu sein.</p>
+      <p>Heute ist dein Tag. Kein riesiges Brimborium, kein Pathos, kein Theater. Nur das hier: ein paar Bilder, unser Lied, und die ehrlichen Worte eines Freundes, der froh ist, dich zu kennen.</p>
+      <p>Auf viele weitere Runden, verrückte Geschichten, mit unserem Klang der Freiheit &mdash; den nur wir verstehen.</p>
+      <p>Alles Gute zum Geburtstag, Bruder. Auf das, was war &mdash; und auf alles, was noch kommt.</p>
+      <p class="sig">&mdash; dein Gee</p>
+    </div>
+  </section>
+
+  <section class="reveal" aria-labelledby="lied-heading">
+    <p class="section-label" id="lied-heading">Unser Lied</p>
+    <h2>Der <em>ewige</em> Klang.</h2>
+    <div class="song-wrap">
+      <div class="song-frame">
+        <video id="songVideo" controls autoplay loop playsinline preload="auto">
+          <source src="media/video/unser-lied.mp4" type="video/mp4">
+          Dein Browser kann das Video leider nicht abspielen.
+        </video>
+      </div>
+      <p class="song-meta" id="songMeta">Tippe ins Video, um den Ton zu öffnen <span class="dot">&middot;</span> egal wo, egal wann</p>
+    </div>
+  </section>
+
+  <section class="reveal" aria-labelledby="galerie-heading">
+    <p class="section-label" id="galerie-heading">Momentaufnahmen</p>
+    <h2>Augenblicke, die <em>geblieben</em> sind.</h2>
+    <div class="gallery" id="gallery">
+      <figure class="feature"><img src="media/galerie/cheers.jpg" alt="Anstoßen, Cheers" loading="lazy"></figure>
+      <figure><img src="media/galerie/IMG_1081.JPG" alt="Wir beide" loading="lazy"></figure>
+      <figure><img src="media/galerie/IMG_0275.JPG" alt="Niko" loading="lazy"></figure>
+      <figure><img src="media/galerie/IMG_0060.JPG" alt="Niko" loading="lazy"></figure>
+      <figure><img src="media/galerie/IMG_0059.JPG" alt="Niko" loading="lazy"></figure>
+      <figure><img src="media/galerie/IMG_0048.JPG" alt="Niko" loading="lazy"></figure>
+      <figure><img src="media/galerie/IMG_0278.JPG" alt="Erinnerung" loading="lazy"></figure>
+      <figure><img src="media/galerie/IMG_0280.JPG" alt="Erinnerung" loading="lazy"></figure>
+      <figure><img src="media/galerie/20181110_160110.jpg" alt="2018" loading="lazy"></figure>
+    </div>
+  </section>
+
+  <section class="reveal" aria-labelledby="story-heading">
+    <p class="section-label" id="story-heading">Unsere Geschichte</p>
+    <h2>Kapitel, die wir <em>zusammen</em> geschrieben haben.</h2>
+    <div class="timeline">
+
+      <div class="tl-item">
+        <p class="tl-year">Anfang</p>
+        <h3>Wie es begann.</h3>
+        <p>Zwei Wege kreuzen sich. Niemand ahnt, dass daraus ein Jahrzehnt wird. Manchmal sind die wichtigsten Tage die, die man nicht im Kalender markiert.</p>
+      </div>
+
+      <div class="tl-item">
+        <p class="tl-year">2018</p>
+        <h3>Damals, der erste Beweis.</h3>
+        <p>Ein Bild aus Novembertagen. Schon damals merkte man: Das hier ist anders. Das hier hält länger als der nächste Sommer.</p>
+      </div>
+
+      <div class="tl-item">
+        <p class="tl-year">Die guten Abende</p>
+        <h3>Gläser, Musik, Geschichten.</h3>
+        <p>Stunden, in denen die Uhr aufhörte zu existieren. Lieder, die zu Erinnerungen wurden. Sätze, die nur wir verstehen &mdash; und an die wir uns Jahre später noch erinnern werden.</p>
+      </div>
+
+      <div class="tl-item">
+        <p class="tl-year">Die stillen Tage</p>
+        <h3>Wenn keine großen Worte nötig sind.</h3>
+        <p>Es gibt Freundschaften, die testet das Leben mit harten Tagen. Wir haben den Test bestanden &mdash; ohne Drama, ohne Inszenierung. Einfach indem wir da waren.</p>
+      </div>
+
+      <div class="tl-item">
+        <p class="tl-year">Heute</p>
+        <h3>Dein Tag.</h3>
+        <p>Ein neues Jahr beginnt für dich. Eines mehr in einer Reihe, in der ich mir wünsche, noch viele mit dir zu zählen. Alles, was du dir vornimmst &mdash; ich glaube, du schaffst es.</p>
+      </div>
+
+      <div class="tl-item">
+        <p class="tl-year">Was kommt</p>
+        <h3>Die Kapitel, die noch leer sind.</h3>
+        <p>Ich weiß nicht, was die nächsten Jahre bringen. Aber ich weiß: Ein paar der besten Geschichten meines Lebens werden wieder deine Handschrift tragen.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="reveal closing">
+    <blockquote>&bdquo;Ein wahrer Freund ist jemand, der dich kennt, wie du bist, versteht, wo du warst, dich begleitet, wo immer du hingehst &mdash; und dich trotzdem nie loslässt.&ldquo;</blockquote>
+    <cite>für Niko, mit allem Drum und Dran</cite>
+  </section>
+
+  <footer>
+    Geschrieben mit <span class="heart" aria-label="Liebe">♥</span> &mdash; für meinen besten Freund.<br>
+    Dein Gee
+  </footer>
+
+</main>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Foto vergrößert">
+  <button type="button" class="lightbox-close" id="lightboxClose" aria-label="Schließen">&times;</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<script>
+  const root = document.documentElement;
+
+  // === Theme ===
+  const saved = localStorage.getItem('gz-bday-theme');
+  if (saved) {
+    root.dataset.theme = saved;
+    document.querySelectorAll('.theme-switcher button').forEach(b => {
+      b.classList.toggle('active', b.dataset.setTheme === saved);
+    });
+  }
+  document.querySelectorAll('[data-set-theme]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      root.dataset.theme = btn.dataset.setTheme;
+      localStorage.setItem('gz-bday-theme', btn.dataset.setTheme);
+      document.querySelectorAll('.theme-switcher button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  // === Autoplay-Song mit smartem Unmute ===
+  const song = document.getElementById('songVideo');
+  const songMeta = document.getElementById('songMeta');
+  if (song) {
+    song.play().catch(() => {
+      song.muted = true;
+      song.play().catch(() => {});
+      const unmute = () => {
+        song.muted = false;
+        song.volume = 0.85;
+        if (songMeta) songMeta.innerHTML = 'Unser Lied <span class="dot">&middot;</span> der ewige Klang';
+      };
+      const trigger = () => {
+        unmute();
+        window.removeEventListener('click', trigger);
+        window.removeEventListener('keydown', trigger);
+        window.removeEventListener('touchstart', trigger);
+        song.removeEventListener('click', trigger);
+      };
+      window.addEventListener('click', trigger, { once: true });
+      window.addEventListener('keydown', trigger, { once: true });
+      window.addEventListener('touchstart', trigger, { once: true });
+      song.addEventListener('click', trigger, { once: true });
+    });
+  }
+
+  // === Sanfte schwebende Lichtpunkte (nur Nacht-Theme) ===
+  const canvas = document.getElementById('bgcanvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  const palette = ['#c9a96e','#5d8aa8','#8a9bb3','#a68a64'];
+  function resizeBG() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const count = Math.min(45, Math.floor((canvas.width * canvas.height) / 32000));
+    particles = Array.from({ length: count }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: 0.8 + Math.random() * 2.4,
+      color: palette[Math.floor(Math.random() * palette.length)],
+      vx: (Math.random() - 0.5) * 0.08,
+      vy: -0.03 - Math.random() * 0.18,
+      alpha: 0.18 + Math.random() * 0.32,
+      pulse: Math.random() * Math.PI * 2
+    }));
+  }
+  resizeBG();
+  window.addEventListener('resize', resizeBG);
+  function drawBG() {
+    if (root.dataset.theme !== 'cyber') { requestAnimationFrame(drawBG); return; }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (const p of particles) {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.pulse += 0.012;
+      if (p.y + p.r < -10) { p.y = canvas.height + p.r; p.x = Math.random() * canvas.width; }
+      if (p.x < -10) p.x = canvas.width + 10;
+      if (p.x > canvas.width + 10) p.x = -10;
+      const a = p.alpha * (0.65 + 0.35 * Math.sin(p.pulse));
+      const glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 7);
+      glow.addColorStop(0, p.color + 'aa');
+      glow.addColorStop(0.4, p.color + '33');
+      glow.addColorStop(1, p.color + '00');
+      ctx.globalAlpha = a;
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r * 7, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(drawBG);
+  }
+  drawBG();
+
+  // === Lightbox ===
+  const lb = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lightboxImg');
+  const lbClose = document.getElementById('lightboxClose');
+  document.querySelectorAll('#gallery img').forEach(img => {
+    img.addEventListener('click', () => {
+      lbImg.src = img.src;
+      lbImg.alt = img.alt;
+      lb.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    });
+  });
+  function closeLb() {
+    lb.classList.remove('open');
+    lbImg.src = '';
+    document.body.style.overflow = '';
+  }
+  lb.addEventListener('click', e => { if (e.target === lb) closeLb(); });
+  lbClose.addEventListener('click', closeLb);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLb(); });
+
+  // === Reveal on scroll ===
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('is-visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
